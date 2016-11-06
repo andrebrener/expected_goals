@@ -2,7 +2,7 @@
 #          File: dataset.py
 #        Author: Andre Brener
 #       Created: 11 Sep 2016
-# Last Modified: 10 Oct 2016
+# Last Modified: 15 Oct 2016
 #   Description: description
 # =============================================================================
 from math import sqrt
@@ -539,6 +539,7 @@ def get_dataset(match):
     match_stats = match_stats.sort_values('minsec', ascending=True)
     match_stats[crosses_col_names[0]].fillna(0)
     match_stats[crosses_col_names[1]].fillna(0)
+    match_stats['assists'] = match_stats['assists'].fillna(0).astype(int)
 
     # print(match_stats['minsec'].value_counts())
     # Continuous Passes
@@ -566,14 +567,14 @@ def get_dataset(match):
     match_stats = pd.merge(
         match_stats,
         copy_df,
-        how='left',
-        on=match_stats_cols)
+        how='left')
 
     for col in crosses_col_names:
         match_stats = match_stats.drop(col, 1)
 
     # print(match_stats.head(25))
-    # print(match_stats[match_stats['action_type'] == 'shot'])['minsec']
+    # print(match_stats[match_stats['action_type']
+        # == 'pass']['consecutive_passes'])
     # Teams
 
     # print(match_stats['minsec'].value_counts())
@@ -813,8 +814,7 @@ def get_dataset(match):
     fk_df_cols = match_dataset_cols + cols_list_fk
     fk_df = fk_df[fk_df_cols]
 
-    match_dataset = pd.merge(match_dataset, fk_df, how='left',
-                             on=match_dataset_cols)
+    match_dataset = pd.merge(match_dataset, fk_df, how='left')
 
     def get_final_shot_type(df):
         if df['shot_fk'] == 'free_kick':
@@ -862,45 +862,58 @@ def get_dataset(match):
     def_df_cols = match_dataset_cols + ['disp_player_pos']
     def_df = def_df[def_df_cols]
 
-    match_dataset = pd.merge(match_dataset, def_df, how='left',
-                             on=match_dataset_cols)
+    match_dataset = pd.merge(match_dataset, def_df, how='left')
     # print(def_df[def_df['action_type'] == 'shot'])
     # print(def_df[def_df['mins'] == '43'][['action_type', 'player_id', 'surname',
     # 'position']])
+
     # Link Assists
 
     def get_assister_id(df):
         if df['shot_type'] in ['shot', 'headed'] and df[
-                'last_incidence_type'] == 'pass' and df['team_id'] == df['last_incidence_team']:
+                'last_incidence_assist'] == 1 and df['team_id'] == df['last_incidence_team']:
             return df['last_incidence_player_id']
+
+    def get_assist_type(df):
+        if df['shot_type'] in ['shot', 'headed'] and df[
+                'last_incidence_assist'] == 1 and df['team_id'] == df['last_incidence_team']:
+            return df['last_inc_as_type']
 
     def get_assister_surname(df):
         if df['shot_type'] in ['shot', 'headed'] and df[
-                'last_incidence_type'] == 'pass' and df['team_id'] == df['last_incidence_team']:
+                'last_incidence_assist'] == 1 and df['team_id'] == df['last_incidence_team']:
             return df['last_incidence_player_surname']
 
     def get_assister_pos(df):
         if df['shot_type'] in ['shot', 'headed'] and df[
-                'last_incidence_type'] == 'pass' and df['team_id'] == df['last_incidence_team']:
+                'last_incidence_assist'] == 1 and df['team_id'] == df['last_incidence_team']:
             return df['last_incidence_player_pos']
+
+    def get_as_cons_passes(df):
+        if df['shot_type'] in ['shot', 'headed'] and df[
+                'last_incidence_assist'] == 1 and df['team_id'] == df['last_incidence_team']:
+            return df['last_inc_cons_passes']
 
     as_df = match_dataset[match_dataset[
         'action_type'].isin(['shot', 'pass'])].copy()
-    as_df = as_df[as_df['assists'] != 0]
-    as_df['last_incidence_type'] = as_df['action_type'].shift()
+    as_df['last_incidence_assist'] = as_df['assists'].shift()
     as_df['last_incidence_player_id'] = as_df['player_id'].shift()
     as_df['last_incidence_player_surname'] = as_df['surname'].shift()
     as_df['last_incidence_player_pos'] = as_df['position'].shift()
     as_df['last_incidence_team'] = as_df['team_id'].shift()
-    as_df['assist_type'] = as_df['pass_type'].shift()
+    as_df['last_inc_as_type'] = as_df['pass_type'].shift()
     as_df['as_start_vert_coord'] = as_df['start_vert_coord'].shift()
     as_df['as_start_hor_coord'] = as_df['start_hor_coord'].shift()
     as_df['as_end_vert_coord'] = as_df['end_vert_coord'].shift()
     as_df['as_end_hor_coord'] = as_df['end_hor_coord'].shift()
     as_df['as_distance'] = as_df['distance'].shift()
+    as_df['last_inc_cons_passes'] = as_df[
+        'consecutive_passes'].shift()
     as_df['assister_id'] = as_df.apply(get_assister_id, axis=1)
     as_df['assister_surname'] = as_df.apply(get_assister_surname, axis=1)
     as_df['assister_position'] = as_df.apply(get_assister_pos, axis=1)
+    as_df['as_consecutive_passes'] = as_df.apply(get_as_cons_passes, axis=1)
+    as_df['assist_type'] = as_df.apply(get_assist_type, axis=1)
 
     match_dataset_cols = list(match_dataset.columns)
     as_df_cols = [
@@ -912,14 +925,20 @@ def get_dataset(match):
         'as_distance',
         'assister_id',
         'assister_surname',
-        'assister_position']
+        'assister_position',
+        'as_consecutive_passes']
 
     def_as_cols = match_dataset_cols + as_df_cols
     as_df = as_df[def_as_cols]
 
-    match_dataset = pd.merge(match_dataset, as_df, how='left',
-                             on=match_dataset_cols)
+    # print(as_df.head(60))
 
+    # print(as_df[as_df['action_type'] == 'shot'])
+    match_dataset = pd.merge(match_dataset, as_df, how='left')
+
+    # print(match_dataset[match_dataset['action_type'] == 'shot'])
+    # print(match_dataset[match_dataset['action_type'] ==
+    # 'shot']['as_consecutive_passes'])
     time_df = match_dataset[(match_dataset['result'] != 'Unsuccessful') & (
         match_dataset['action_type'] != 'goal_keeping')].copy()
 
@@ -957,8 +976,7 @@ def get_dataset(match):
     time_df_cols = match_dataset_cols + ['time_from_rival_last_inc']
     time_df = time_df[time_df_cols]
 
-    match_dataset = pd.merge(match_dataset, time_df, how='left',
-                             on=match_dataset_cols)
+    match_dataset = pd.merge(match_dataset, time_df, how='left')
 
     return match_dataset, players
 

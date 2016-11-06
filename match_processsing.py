@@ -2,7 +2,7 @@
 #          File: match_processsing.py
 #        Author: Andre Brener
 #       Created: 18 Sep 2016
-# Last Modified: 10 Oct 2016
+# Last Modified: 16 Oct 2016
 #   Description: description
 # =============================================================================
 import os
@@ -25,10 +25,10 @@ def process_game(dir_path):
                 d))]
     for directory in dirs:
         print(directory)
-        new_path_games = '{0}{1}/processed_games'.format(dir_path, directory)
-        new_path_players = '{0}{1}/processed_players'.format(
+        new_path_games = '{0}/{1}/processed_games'.format(dir_path, directory)
+        new_path_players = '{0}/{1}/processed_players'.format(
             dir_path, directory)
-        season_path = '{0}{1}'.format(dir_path, directory)
+        season_path = '{0}/{1}'.format(dir_path, directory)
         print(season_path)
         os.makedirs(new_path_players)
         os.makedirs(new_path_games)
@@ -45,5 +45,20 @@ def process_game(dir_path):
             game_dataset.to_csv(new_name_game, index=False, encoding='utf-8')
             players.to_csv(new_name_players, index=False, encoding='utf-8')
 
-path = 'data/world_cup/'
+
+# def get_data(dir_path):
+    # dirs = [
+        # d for d in os.listdir(dir_path) if os.path.isdir(
+            # os.path.join(
+            # dir_path,
+            # d))]
+    # for competition in dirs:
+        # print(competition)
+        # path = '{0}/{1}'.format(dir_path, competition)
+        # process_game(path)
+
+# path = 'data'
+
+# get_data(path)
+path = 'data/ligue1'
 process_game(path)
