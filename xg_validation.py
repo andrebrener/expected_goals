@@ -62,4 +62,4 @@ diff_table.reset_index(inplace=True)
 # print(test.head(10))
 # print(diff_table.sample(20))
 
-diff_table.to_csv('season_2015-16_xg.csv')
+diff_table.to_csv('season_2015-16_xg.csv', index=False)
