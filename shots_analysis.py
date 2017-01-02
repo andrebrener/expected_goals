@@ -3,7 +3,7 @@
 #          File: shots_analysis.py
 #        Author: Andre Brener
 #       Created: 11 Oct 2016
-# Last Modified: 05 Nov 2016
+# Last Modified: 17 Nov 2016
 #   Description: description
 # =============================================================================
 import pandas as pd
@@ -26,7 +26,7 @@ df = df[
             'bundesliga',
             'la_liga',
             'ligue1'])) & (
-                df['season_x'] == '2015-2016') & (
+                df['season_x'] != '2015-2016') & (
                     df['is_own'] < 1) & (
                         df['field_players_team'] > 8) &
     (df['field_players_rival'] > 8) &
@@ -36,6 +36,7 @@ print(df['competition'].value_counts())
 print(df['season_x'].value_counts())
 # Filter the columns to start
 df = df[['team_name',
+         'surname',
          'competition',
          'season_x',
          'hor_coord',
@@ -255,6 +256,7 @@ for col in assist_cols:
 total_cols = ['competition',
               'season_x',
               'team_name',
+              'surname',
               'hor_location',
               'ver_location',
               'injurytime_play',
@@ -285,5 +287,5 @@ total_cols = ['competition',
 df = df[total_cols]
 print(df.shape)
 
-df.to_csv('shots_database/test_table_processed.csv', index=False)
+df.to_csv('shots_database/train_table_processed.csv', index=False)
 print(df.sample(20))

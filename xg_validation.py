@@ -2,7 +2,7 @@
 #          File: xg_validation.py
 #        Author: Andre Brener
 #       Created: 27 Oct 2016
-# Last Modified: 06 Nov 2016
+# Last Modified: 17 Nov 2016
 #   Description: description
 # =============================================================================
 import pickle
@@ -24,7 +24,12 @@ test_table = total_data.copy()
 x_cols = []
 for col in test_table.columns:
     # print(data[col].value_counts())
-    if col not in ['result', 'team_name', 'season_x', 'competition']:
+    if col not in [
+        'result',
+        'team_name',
+        'season_x',
+        'competition',
+            'surname']:
         test_table[col] = test_table[col].astype(str)
         x_cols.append(col)
 
@@ -62,4 +67,14 @@ diff_table.reset_index(inplace=True)
 # print(test.head(10))
 # print(diff_table.sample(20))
 
-diff_table.to_csv('season_2015-16_xg.csv', index=False)
+diff_table.to_csv('teams_season_2015-16_xg.csv', index=False)
+
+
+pl_table = test_table[['surname', 'result', 'xg']]
+pl_table = pl_table.groupby('surname').sum()
+pl_table['xg'] = pl_table['xg'].round(2)
+
+pl_table['difference'] = (pl_table['xg'] - pl_table['result']).round(2)
+pl_table.reset_index(inplace=True)
+
+pl_table.to_csv('players_season_2015-16_xg.csv', index=False)
