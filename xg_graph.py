@@ -2,7 +2,7 @@
 #          File: xg_graph.py
 #        Author: Andre Brener
 #       Created: 06 Nov 2016
-# Last Modified: 06 Nov 2016
+# Last Modified: 21 Nov 2016
 #   Description: description
 # =============================================================================
 import seaborn
@@ -12,7 +12,7 @@ import pandas as pd
 
 import matplotlib.pyplot as plt
 
-path = 'season_2015-16_xg.csv'
+path = 'teams_season_2015-16_xg.csv'
 
 data = pd.read_csv(path)
 
@@ -46,17 +46,19 @@ other_teams_xg = other_teams_df['xg']
 
 fig, ax = plt.subplots()
 plt.style.use('fivethirtyeight')
-ax.text(3, 107, 'Goles vs Goles Esperados',
-        color='0.1', fontsize=22, horizontalalignment='left', weight='bold')
-ax.text(3, 102, 'Top 5 de Ligas europeas: Temporada 2015-2016',
-        horizontalalignment='left', color='0.4', fontsize=16)
+ax.text(2, 107, 'Los Goles Esperados se asemejan a los Goles Convertidos',
+        color='0.1', fontsize=28, horizontalalignment='left', weight='bold')
+ax.text(2, 102, 'Top 5 de Ligas europeas: Temporada 2015-2016',
+        horizontalalignment='left', color='0.4', fontsize=20)
+# ax.text(80, 94, 'Goles Esperados = Goles Convertidos',
+# horizontalalignment='left', color='0.4', fontsize=18, weight='bold')
 x = np.linspace(13, 90)
-ax.scatter(name_teams_goals, name_teams_xg, s=90, color='deepskyblue',
+ax.scatter(name_teams_goals, name_teams_xg, s=100, color='deepskyblue',
            alpha=0.7)
-ax.scatter(other_teams_goals, other_teams_xg, s=90, color='deepskyblue',
+ax.scatter(other_teams_goals, other_teams_xg, s=100, color='deepskyblue',
            alpha=0.7)
-ax.plot(x, x, color='orangered', linewidth=2)
-ax.tick_params(axis='both', labelsize=14, colors='0.4')
+ax.plot(x, x, color='orangered', linewidth=3)
+ax.tick_params(axis='both', labelsize=18, colors='0.4')
 ax.spines['bottom'].set_visible(True)
 ax.spines['bottom'].set_color('0.1')
 for team in name_teams:
@@ -79,10 +81,10 @@ for team in name_teams:
         xytext=(goals + x_adjust, xg + y_adjust),
         va=va,
         ha=ha,
-        size=14,
+        size=18,
         color='0.4')
 
 
-plt.xlabel('Goles a favor', fontsize=16, color='0.4')
-plt.ylabel('Goles Esperados', fontsize=16, color='0.4')
+plt.xlabel('Goles Convertidos', fontsize=20, color='0.4')
+plt.ylabel('Goles Esperados', fontsize=20, color='0.4')
 plt.show()

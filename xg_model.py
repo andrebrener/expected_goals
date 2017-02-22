@@ -2,7 +2,7 @@
 #          File: xg_model.py
 #        Author: Andre Brener
 #       Created: 14 Oct 2016
-# Last Modified: 05 Nov 2016
+# Last Modified: 17 Nov 2016
 #   Description: description
 # =============================================================================
 import pickle
@@ -31,7 +31,8 @@ def get_table(train_table):
     x_cols = []
     for col in train_table.columns:
         # print(data[col].value_counts())
-        if col not in ['result', 'team_name', 'competition', 'season_x']:
+        if col not in ['result', 'team_name', 'competition', 'season_x',
+                       'surname']:
             train_table[col] = train_table[col].astype(str)
             x_cols.append(col)
 
