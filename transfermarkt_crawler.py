@@ -1,9 +1,36 @@
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 import requests
 import pandas as pd
 
 from scrapy.http import TextResponse
+from pytrends.request import TrendReq
+
+
+def get_trends_data(google_username, google_password, kw_list, sd):
+    pytrend = TrendReq(
+        google_username,
+        google_password,
+        custom_useragent='LTA')
+
+    pytrend.build_payload(kw_list=kw_list)
+
+    df = pytrend.interest_over_time().reset_index()
+
+    sd = datetime.strptime(sd, '%Y-%m-%d').date()
+
+    while sd.strftime(
+            '%Y-%m-%d') not in df['date'].dt.strftime('%Y-%m-%d').values:
+        sd = sd - timedelta(1)
+
+    df = df[(df['date'].dt.year == sd.year) & (df['date'].dt.month == sd.month)
+            & (df['date'].dt.day == sd.day)]
+
+    df = df.T.reset_index()
+
+    df.columns = ['player', 'google_trend']
+
+    return df
 
 
 def date_range(start_date, end_date):
@@ -76,7 +103,7 @@ def get_df(players,
     df = pd.DataFrame(player_dict).T.reset_index()
 
     df.columns = [
-        'name',
+        'player',
         'nationality',
         'age',
         'position',
@@ -90,7 +117,8 @@ def get_df(players,
     return df
 
 
-def run_crawler(base_url, ua, start_date, end_date):
+def run_crawler(base_url, ua, start_date, end_date,
+                google_username, google_password):
 
     temp_df = pd.DataFrame()
 
@@ -116,6 +144,11 @@ def run_crawler(base_url, ua, start_date, end_date):
                     trans_prices,
                     d)
 
+        trends_df = get_trends_data(google_username, google_password,
+                                    players, d)
+
+        df = pd.merge(df, trends_df, how='left', on='player')
+
         temp_df = pd.concat([temp_df, df])
 
     return temp_df
@@ -124,10 +157,11 @@ def run_crawler(base_url, ua, start_date, end_date):
 base_url = "http://www.transfermarkt.es/"
 
 start_date = date(2017, 2, 19)
-end_date = date(2017, 2, 22)
+end_date = date(2017, 2, 20)
 
 ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36"
 
-df = run_crawler(base_url, ua, start_date, end_date)
+df = run_crawler(base_url, ua, start_date, end_date,
+                 'andre.testing12@gmail.com', 'andretest')
 
 print(df)
