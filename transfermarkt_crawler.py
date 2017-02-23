@@ -74,6 +74,7 @@ def get_df(players,
                                next_clubs[n], mkt_values[n], trans_prices[n]]
 
     df = pd.DataFrame(player_dict).T.reset_index()
+
     df.columns = [
         'name',
         'nationality',
@@ -83,6 +84,7 @@ def get_df(players,
         'next_club',
         'market_value',
         'transfer_value']
+
     df['transfer_date'] = [transfer_date] * df.shape[0]
 
     return df
@@ -91,7 +93,6 @@ def get_df(players,
 def run_crawler(base_url, ua, start_date, end_date):
 
     temp_df = pd.DataFrame()
-    # df_list = []
 
     dates = date_range(start_date, end_date)
 
@@ -126,7 +127,6 @@ start_date = date(2017, 2, 19)
 end_date = date(2017, 2, 22)
 
 ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36"
-
 
 df = run_crawler(base_url, ua, start_date, end_date)
 
