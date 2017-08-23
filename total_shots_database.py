@@ -19,15 +19,17 @@ def concat_df(path, master_df):
 def build_database(dir_path):
     total_games = pd.DataFrame()
     dirs = [
-        d for d in os.listdir(dir_path) if os.path.isdir(
-            os.path.join(
-                dir_path,
-                d))]
+        d for d in os.listdir(dir_path)
+        if os.path.isdir(os.path.join(dir_path, d))
+    ]
     for competition in dirs:
         print(competition)
         path_games = '{0}/{1}/shots_database.csv'.format(dir_path, competition)
         total_games = concat_df(path_games, total_games)
     total_games.to_csv('shots_database/shots_database.csv', index=False)
 
-dir_path = 'shots_database'
-build_database(dir_path)
+
+if __name__ == '__main__':
+
+    dir_path = 'shots_database'
+    build_database(dir_path)

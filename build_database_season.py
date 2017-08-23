@@ -2,7 +2,7 @@
 #          File: build_database_season.py
 #        Author: Andre Brener
 #       Created: 10 Oct 2016
-# Last Modified: 10 Oct 2016
+# Last Modified: 22 Aug 2017
 #   Description: description
 # =============================================================================
 import os
@@ -32,18 +32,16 @@ def concat_df(path, master_df):
 
 def build_database(dir_path, competition):
     dirs = [
-        d for d in os.listdir(dir_path) if os.path.isdir(
-            os.path.join(
-                dir_path,
-                d))]
+        d for d in os.listdir(dir_path)
+        if os.path.isdir(os.path.join(dir_path, d))
+    ]
     for season in dirs:
         total_games = pd.DataFrame()
         total_players = pd.DataFrame()
         print(season)
         os.makedirs('database/{0}/{1}'.format(competition, season))
         path_games = '{0}/{1}/processed_games/'.format(dir_path, season)
-        path_players = '{0}/{1}/processed_players/'.format(
-            dir_path, season)
+        path_players = '{0}/{1}/processed_players/'.format(dir_path, season)
         total_games = concat_df(path_games, total_games)
         total_players = concat_df(path_players, total_players)
 
@@ -51,19 +49,21 @@ def build_database(dir_path, competition):
             'database/{0}/{1}/games_database.csv'.format(competition, season),
             index=False)
         total_players.to_csv(
-            'database/{0}/{1}/players_database.csv'.format(competition, season),
+            'database/{0}/{1}/players_database.csv'.format(competition,
+                                                           season),
             index=False)
 
 
-os.makedirs('database')
-dir_path = 'data/'
-dirs = [
-    d for d in os.listdir(dir_path) if os.path.isdir(
-        os.path.join(
-            dir_path,
-            d))]
-for competition in dirs:
-    print(competition)
-    os.makedirs('database/{0}'.format(competition))
-    path = 'data/{0}'.format(competition)
-    build_database(path, competition)
+if __name__ == '__main__':
+
+    os.makedirs('database', exist_ok=True)
+    dir_path = 'data/'
+    dirs = [
+        d for d in os.listdir(dir_path)
+        if os.path.isdir(os.path.join(dir_path, d))
+    ]
+    for competition in dirs:
+        print(competition)
+        os.makedirs('database/{0}'.format(competition), exist_ok=True)
+        path = 'data/{0}'.format(competition)
+        build_database(path, competition)
