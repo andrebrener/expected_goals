@@ -1,7 +1,7 @@
 # Expected Goals Model
 
 This repo uses Machine Learning models to predict football goals. The scripts are written and intended to use with Python 3.
-The data comes from a crawler that takes data from Sqwawka and needs to be saved in a directory named `data` in the repo.
+The data to be used is taken from a Sqwawka crawler, in which every game must be saved in a directory named `data/{competition}` in the repo.
 
 ## Getting Started
 
