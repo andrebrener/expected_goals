@@ -7,7 +7,7 @@ The data to be used is taken from a Sqwawka crawler, in which every game must be
 
 ### 1. Clone Repo
 
-`git clone https://github.com/andrebrener/football_data.git`
+`git clone https://github.com/andrebrener/expected_goals.git`
 
 ### 2. Install Packages Required
 
