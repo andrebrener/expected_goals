@@ -7,7 +7,7 @@
 # =============================================================================
 import os
 
-from dataset import get_dataset
+from data.dataset import get_dataset
 
 
 def get_files(path):

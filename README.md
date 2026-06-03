@@ -41,24 +41,29 @@ data must be supplied separately.
 
 ## Pipeline / run order
 
-The scripts are standalone and are meant to be run in this order. Each one reads
-the output of the previous step from hardcoded relative paths:
+The code is organized into two packages: **`data/`** (building the dataset) and
+**`model/`** (training / validating / plotting the xG model). The
+`transfermarkt_crawler/` directory holds a separate scraper. Run each step **as a
+module from the repo root** (`python -m <package>.<script>`) so the imports
+resolve. The steps are meant to run in this order; each reads the previous step's
+output from hardcoded relative paths:
 
-1. `match_processing.py` – parse raw match files into per-game / per-player CSVs
-   under `data/{competition}/{season}/processed_*` (depends on `dataset.py`).
-2. `build_database_season.py` – concatenate processed games/players into
-   `database/{competition}/{season}/`.
-3. `build_shots_database.py` – extract shot events into
+1. `python -m data.match_processing` – parse raw match files into per-game /
+   per-player CSVs under `data/{competition}/{season}/processed_*` (depends on
+   `data/dataset.py`).
+2. `python -m data.build_database_season` – concatenate processed games/players
+   into `database/{competition}/{season}/`.
+3. `python -m data.build_shots_database` – extract shot events into
    `shots_database/{competition}/shots_database.csv`.
-4. `total_shots_database.py` – merge per-competition shot files into a single
-   `shots_database/shots_database.csv`.
-5. `shots_analysis.py` – clean / feature-engineer shots into
+4. `python -m data.total_shots_database` – merge per-competition shot files into a
+   single `shots_database/shots_database.csv`.
+5. `python -m model.shots_analysis` – clean / feature-engineer shots into
    `shots_database/train_table_processed.csv`.
-6. `xg_model.py` – train a `RandomForestRegressor` (grid search) and pickle it
-   to `random_forest.pkl`.
-7. `xg_validation.py` – load the model, score the test table and write per-team
-   / per-player xG CSVs.
-8. `xg_graph.py` – plot actual goals vs. xG.
+6. `python -m model.xg_model` – train a `RandomForestRegressor` (grid search) and
+   pickle it to `random_forest.pkl`.
+7. `python -m model.xg_validation` – load the model, score the test table and
+   write per-team / per-player xG CSVs.
+8. `python -m model.xg_graph` – plot actual goals vs. xG.
 
 The `transfermarkt_crawler/` directory contains a separate, best-effort scraper
 for Transfermarkt transfer data + Google Trends. It is **unmaintained**:
@@ -69,8 +74,8 @@ them).
 
 ## Known limitations
 
-- **The data-build pipeline does not run as-is.** `dataset.py` (and therefore
-  `match_processing.py`) imports `SquawkaReport` from a `utils.py` module that
+- **The data-build pipeline does not run as-is.** `data/dataset.py` (and therefore
+  `data/match_processing.py`) imports `SquawkaReport` from a `utils.py` module that
   was deleted in an earlier commit (`8249bbe "delete crawler"`) and is **not
   recoverable from this repository**. Steps 1–2 above cannot run until an
   equivalent Squawka parser is supplied. The downstream steps (3–8) only work if
@@ -78,7 +83,7 @@ them).
 - **`random_forest.pkl` is a large (~67 MB) committed binary.** It is now listed
   in `.gitignore` so it won't be re-added, but it still exists in the repo and
   in git history. Pickled scikit-learn models are tied to a specific library
-  version and execute arbitrary code on load, so regenerate it with `xg_model.py`
+  version and execute arbitrary code on load, so regenerate it with `python -m model.xg_model`
   rather than trusting the committed file.
 - The Squawka data source itself was discontinued, so fresh data cannot be
   collected with the original tooling.
