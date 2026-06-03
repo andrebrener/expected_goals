@@ -39,7 +39,8 @@ def build_database(dir_path, competition):
         total_games = pd.DataFrame()
         total_players = pd.DataFrame()
         print(season)
-        os.makedirs('database/{0}/{1}'.format(competition, season))
+        os.makedirs(
+            'database/{0}/{1}'.format(competition, season), exist_ok=True)
         path_games = '{0}/{1}/processed_games/'.format(dir_path, season)
         path_players = '{0}/{1}/processed_players/'.format(dir_path, season)
         total_games = concat_df(path_games, total_games)

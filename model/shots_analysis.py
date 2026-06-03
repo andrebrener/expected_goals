@@ -156,7 +156,7 @@ def weight_range(n):
         return 'light'
     elif n < 90:
         return 'normal'
-    elif n < 90:
+    elif n < 100:
         return 'heavy'
     else:
         return 'very_heavy'

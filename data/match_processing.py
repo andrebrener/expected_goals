@@ -1,5 +1,5 @@
 # =============================================================================
-#          File: match_processsing.py
+#          File: match_processing.py
 #        Author: Andre Brener
 #       Created: 18 Sep 2016
 # Last Modified: 22 Aug 2017
@@ -7,7 +7,7 @@
 # =============================================================================
 import os
 
-from dataset import get_dataset
+from data.dataset import get_dataset
 
 
 def get_files(path):

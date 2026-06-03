@@ -1,0 +1,12 @@
+# Core data / ML stack
+pandas
+numpy
+scikit-learn
+matplotlib
+seaborn
+
+# Crawler (transfermarkt_crawler/)
+beautifulsoup4
+requests
+scrapy
+pytrends

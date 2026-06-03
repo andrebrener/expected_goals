@@ -13,9 +13,8 @@ import pandas as pd
 from sklearn.svm import SVR
 from sklearn.metrics import mean_squared_error
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
-from sklearn.grid_search import GridSearchCV
 from sklearn.naive_bayes import MultinomialNB
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import GridSearchCV, train_test_split
 
 path = 'shots_database/train_table_processed.csv'
 
@@ -60,7 +59,6 @@ forest_parameters = {'n_estimators': [150, 200, 250, 300],
                      'max_depth': [5, 10, 15]}
 SVR_parameters = {'C': [0.5, 0.6, 0.7, 1.0]}
 grad_parameters = {'n_estimators': [100, 150, 200],
-                   'max_depth': [3, 10],
                    'max_depth': [5, 10],
                    "max_features": [None, 1, 5],
                    "max_leaf_nodes": [None, 5],
