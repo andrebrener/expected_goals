@@ -1,5 +1,5 @@
 # =============================================================================
-#          File: build_database.py
+#          File: total_shots_database.py
 #        Author: Andre Brener
 #       Created: 10 Oct 2016
 # Last Modified:
