@@ -1,3 +1,5 @@
+import os
+
 from datetime import date, datetime, timedelta
 
 import requests
@@ -161,7 +163,12 @@ end_date = date(2017, 2, 20)
 
 ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36"
 
+# Google credentials are read from the environment, never hardcoded.
+# Set GOOGLE_USERNAME and GOOGLE_PASSWORD before running this script.
+google_username = os.environ.get("GOOGLE_USERNAME")
+google_password = os.environ.get("GOOGLE_PASSWORD")
+
 df = run_crawler(base_url, ua, start_date, end_date,
-                 'andre.testing12@gmail.com', 'andretest')
+                 google_username, google_password)
 
 print(df)
